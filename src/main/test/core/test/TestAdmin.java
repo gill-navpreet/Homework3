@@ -19,6 +19,32 @@ public class TestAdmin {
        
     }
 
+    // Null name of class
+    // can't be null string
+    @Test
+    public void invalidNameNull() {
+    		try {
+    			this.admin.createClass(null, 2017, "Instructor", 15);
+    		}
+    		catch(NullPointerException e) {
+    			//System.out.println(e.getClass());
+    			assertEquals(NullPointerException.class, e.getClass());
+    		} 
+    }
+    
+    // Null name of instructor
+    // can't be null string
+    @Test
+    public void instructorNull() {
+    		try {
+    			this.admin.createClass("ECS20", 2017, null, 15);
+    		}
+    		catch(NullPointerException e) {
+    			//System.out.println(e.getClass());
+    			assertEquals(NullPointerException.class, e.getClass());
+    		} 
+    }
+    
     // InValid name of class
     // can't be empty string
     @Test
