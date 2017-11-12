@@ -39,6 +39,8 @@ public class TestCourseManager {
 	 */
 	public void setupMocking() {
 		Mockito.doNothing().when(this.admin).createClass(Mockito.anyString(), AdditionalMatchers.lt(2017), Mockito.anyString(), Mockito.anyInt());
+		Mockito.doNothing().when(this.admin).createClass(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), AdditionalMatchers.leq(0));
+		Mockito.doNothing().when(this.admin).createClass(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), AdditionalMatchers.geq(1000));
 	}
 
 	@Test
@@ -58,4 +60,30 @@ public class TestCourseManager {
 		this.courseManager.createClass("ECS161", 2018, "Instructor", 1);
 		Mockito.verify(this.admin, Mockito.never()).createClass(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyInt());
 	}
+	
+	@Test
+	public void testCreateClassValidCapacity() {
+	 	this.courseManager.createClass("ECS161", 2017, "Instructor", 1);
+	 	assertTrue(this.courseManager.classExists("ECS161", 2017));
+	 }
+	
+	@Test
+	public void testCreateClassInvalidCapacityThousand() {
+	 	this.courseManager.createClass("ECS161", 2017, "Instructor", 1000);
+	 	assertFalse(this.courseManager.classExists("ECS161", 2017));
+	 }
+	
+	@Test
+	public void testCreateClassInvalidCapacityZero() {
+	 	this.courseManager.createClass("ECS161", 2017, "Instructor", 0);
+	 	assertFalse(this.courseManager.classExists("ECS161", 2017));
+	 }
+	
+	@Test
+	public void testCreateClassInvalidCapacityNegative() {
+	 	this.courseManager.createClass("ECS161", 2017, "Instructor", -100);
+	 	assertFalse(this.courseManager.classExists("ECS161", 2017));
+	 }
+	
+	
 }
