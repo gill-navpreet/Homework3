@@ -2,18 +2,20 @@ package core.test;
 
 import core.api.IAdmin;
 import core.api.impl.Admin;
+import core.api.IStudent;
+import core.api.impl.Student;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
 
 public class TestAdmin {
 
     private IAdmin admin;
    
     @Before
+    // This will run before every test
     public void setup() {
         this.admin = new Admin();
        
@@ -94,13 +96,12 @@ public class TestAdmin {
     
  // instructor teaches more than 2 classes in same year
     @Test
-    public void testIfSameProfessorSameYear() {
-        this.admin.createClass("Test1", 2017, "Instructor", 15);
-        this.admin.createClass("Test2", 2017, "Instructor", 15);
-        this.admin.createClass("Test3", 2017, "Instructor", 15);
-        assertTrue(this.admin.classExists("Test1", 2017));
-        assertTrue(this.admin.classExists("Test2", 2017));
-        assertFalse(this.admin.classExists("Test3",2017));
+    public void testSameProfessorSameYear() {
+        this.admin.createClass("Test1", 2017, "Nav", 15);
+        this.admin.createClass("Test2", 2017, "Nav", 15);
+        this.admin.createClass("Test3", 2017, "Nav", 15);
+        assertNull(this.admin.getClassInstructor("Test3", 2017));
+//        assertFalse(this.admin.classExists("Test3",2017));
     }
     
   // instructor teaches more than 2 classes in different years year
@@ -134,21 +135,40 @@ public class TestAdmin {
     @Test
     public void changeCapacityPos() {
         this.admin.createClass("ECS", 2017, "Sean", 10);
-        int before =  this.admin.getClassCapacity("ECS", 2017);
+//        int before =  this.admin.getClassCapacity("ECS", 2017);
         this.admin.changeCapacity("ECS", 2017, 100);
         int after =  this.admin.getClassCapacity("ECS", 2017);
         //System.out.println(2<3);
-        assertTrue(before < after);
+        assertTrue(after == 100);
     }
     
- // Change capacity to positive number equal to current capacity
+    // Change capacity to positive number equal to the current number of enrollees
     @Test
-    public void changeCapacityPosEqual() {
-        this.admin.createClass("ECS", 2017, "Sean", 100);
-        int before =  this.admin.getClassCapacity("ECS", 2017);
-        this.admin.changeCapacity("ECS", 2017, 100);
+    public void changeCapacityPosEqualToCurrentEnrolless() {
+        this.admin.createClass("ECS", 2017, "Sean", 10);
+//        int before =  this.admin.getClassCapacity("ECS", 2017);
+        new Student().registerForClass("Student", "ECS", 2017);
+        new Student().registerForClass("Student2", "ECS", 2017);
+        new Student().registerForClass("Student3", "ECS", 2017);
+        this.admin.changeCapacity("ECS", 2017, 3);
         int after =  this.admin.getClassCapacity("ECS", 2017);
-        assertTrue(after==before);
+        //System.out.println(2<3);
+        assertTrue(after == 3);
+    }
+    
+    
+            
+ // Change capacity to positive number less than current enrollees
+    @Test
+    public void changeCapacityLessThanEnrollees() {
+        this.admin.createClass("ECS", 2017, "Sean", 3);
+        new Student().registerForClass("Student", "ECS", 2017);
+        new Student().registerForClass("Student2", "ECS", 2017);
+        new Student().registerForClass("Student3", "ECS", 2017);
+        this.admin.changeCapacity("ECS", 2017, 2);
+        int after =  this.admin.getClassCapacity("ECS", 2017);
+//        System.out.println(after);
+        assertTrue(after == 3);
         
     }
     
@@ -171,7 +191,7 @@ public class TestAdmin {
         assertTrue(before==after);  
     }
     
- // Change capacity to of non-existent class
+ // Change capacity of non-existent class
     @Test
     public void changeCapacityClass() {
         this.admin.createClass("ECS", 2017, "Sean", 10);
@@ -183,4 +203,5 @@ public class TestAdmin {
         int afterr =  this.admin.getClassCapacity("ECS", 2013);
         assertTrue(-1 == afterr);  
     }
+   
 }
