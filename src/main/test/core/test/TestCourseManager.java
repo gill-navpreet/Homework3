@@ -44,6 +44,26 @@ public class TestCourseManager {
 	}
 
 	@Test
+	public void testCreateClassNameYearUnique() {
+		Mockito.doCallRealMethod().doNothing().when(this.admin).createClass("ECS161", 2017, "Instructor1", 1);
+		this.courseManager.createClass("ECS161", 2017, "Instructor", 10);
+		this.courseManager.createClass("ECS161", 2017, "Instructor1", 10);
+		assertEquals("Instructor", this.courseManager.getClassInstructor("ECS161", 2017));
+	}
+	
+	@Test
+	public void testCreateClassNameTwoProfsPerYear() {
+		Mockito.doCallRealMethod().doNothing().when(this.admin).createClass("ECS162", 2017, "Instructor", 1);
+		this.courseManager.createClass("ECS160", 2017, "Instructor", 10);
+		this.courseManager.createClass("ECS161", 2017, "Instructor", 10);
+		this.courseManager.createClass("ECS162", 2017, "Instructor", 10);
+		assertEquals("Instructor", this.courseManager.getClassInstructor("ECS160", 2017));
+		assertEquals("Instructor", this.courseManager.getClassInstructor("ECS161", 2017));
+		assertFalse(this.courseManager.classExists("ECS162", 2017));
+	}
+	
+	
+	@Test
 	public void testCreateClassCorrect() {
 		this.courseManager.createClass("ECS161", 2017, "Instructor", 1);
 		assertTrue(this.courseManager.classExists("ECS161", 2017));
